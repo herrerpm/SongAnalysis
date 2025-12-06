@@ -263,25 +263,41 @@ if df is not None:
                 """, unsafe_allow_html=True)
 
     with col_radar:
-        st.markdown("### ⏰ Circadian Rhythm")
-        if 'ts' in df.columns:
-            hourly_counts = df['ts'].dt.hour.value_counts().sort_index().reindex(range(24), fill_value=0)
-            fig_area = px.area(x=hourly_counts.index, y=hourly_counts.values)
-            fig_area.update_traces(line_shape='spline', line_color='#00D4FF', fillcolor='rgba(0, 212, 255, 0.15)')
-            fig_area.update_layout(
-                margin=dict(t=20, b=20, l=20, r=20),
-                height=300,
-                xaxis=dict(
-                    tickmode='array', tickvals=[0, 6, 12, 18, 23],
-                    ticktext=['12am', '6am', '12pm', '6pm', '11pm'],
-                    showgrid=False,
-                    title="Hour of Day"
-                ),
-                yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.05)", zeroline=False, title="Play Count"),
-                hovermode="x unified"
-            )
-            style_chart(fig_area)
-            st.plotly_chart(fig_area, use_container_width=True)
+        with col_radar:
+            st.markdown("### ⏰ Circadian Rhythm")
+            if 'ts' in df.columns:
+                hourly_counts = df['ts'].dt.hour.value_counts().sort_index().reindex(range(24), fill_value=0)
+
+                hourly_df = hourly_counts.to_frame(name='Play Count')
+                hourly_df['Hour'] = hourly_df.index
+
+                fig_area = px.area(hourly_df, x='Hour', y='Play Count')
+
+                fig_area.update_traces(
+                    line_shape='spline',
+                    line_color='#00D4FF',
+                    fillcolor='rgba(0, 212, 255, 0.15)',
+                    hovertemplate=(
+                            '<b>Hour:</b> %{x}<br>' +
+                            '<b>Total Plays:</b> %{y:,.0f}<extra></extra>'
+                    )
+                )
+
+                fig_area.update_layout(
+                    margin=dict(t=20, b=20, l=20, r=20),
+                    height=300,
+                    xaxis=dict(
+                        title="Hour of Day",
+                        tickmode='array', tickvals=[0, 6, 12, 18, 23],
+                        ticktext=['12am', '6am', '12pm', '6pm', '11pm'],
+                        showgrid=False,
+                    ),
+                    yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.05)", zeroline=False, title="Play Count"),
+                    # Keep hovermode="x unified" to show a single box for the whole vertical line at the X value
+                    hovermode="x unified"
+                )
+                style_chart(fig_area)
+                st.plotly_chart(fig_area, use_container_width=True)
 
     # === SECTION 2: THE DEEP DIVE ===
     st.markdown("---")
