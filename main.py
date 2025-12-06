@@ -4,12 +4,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pycountry
 import numpy as np
-import os  # <--- NEW IMPORT
+import os
 
-# --- 1. CONFIGURATION & DESIGN SYSTEM ---
 st.set_page_config(page_title="Audio Analytics", page_icon="⚡", layout="wide")
 
-# The "Neon Glass" Design System - UPGRADED
 st.markdown("""
 <style>
     /* IMPORT FONTS */
@@ -437,7 +435,6 @@ if df is not None:
     else:
         st.info("Not enough data for the Race Chart.")
 else:
-    # Empty State with Animation
     st.markdown("""
     <div style='text-align: center; padding: 100px;'>
         <h3 style='opacity: 0.5;'>Waiting for data injection...</h3>
